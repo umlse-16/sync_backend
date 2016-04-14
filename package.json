@@ -3,12 +3,6 @@
   "version": "1.0.0",
   "description": "Software Engineering Sync Backend for Recipe Web App",
   "main": "sync.js",
-  "repositoy": {
-    "type":"git",
-    "url": "https://github.com/umlse-16/sync_backend"
-      "type":"git",
-      "url": "https://github.com/umlse-16/sync_backend.git"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
