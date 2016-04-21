@@ -10,17 +10,18 @@ function SyncApi(params) {
     if(!params.express)throw 'SyncApi params require an express instance';
     if(!params.ns)params.ns = '/sync';
 
-    params.express.get(params.ns, (function(req, res) {
+    params.express.get(params.ns+'/:id', (function(req, res) {
       var id = req.params.id;
       if(!id) {
           res.status(400).json({error:'need object id'});
       } else {
-        var obj = this.get(id);
-        if(!obj) {
-          res.status(404).json({error:'no object of that id'});
-        } else {
-          res.status(302).json(obj);
-        }
+        this.get(id, function(obj) {
+          if(!obj) {
+            res.status(404).json({error:'no object of that id'});
+          } else {
+            res.status(302).json(obj);
+          }
+        });
       }
     }).bind(this));
     params.express.post(params.ns, (function(req, res) {
@@ -28,12 +29,13 @@ function SyncApi(params) {
       if(!model) {
           res.status(400).json({error:'missing model field'});
       } else {
-          model = this.create(model);
-          if(model.$id) { // they successfully created it
-            res.status(200).json(model);
-          } else {
-            res.status(500).json({error: 'failed to create object'});
-          }
+          this.create(model, function(model) {
+            if(model.$id) { // they successfully created it
+              res.status(200).json(model);
+            } else {
+              res.status(500).json({error: 'failed to create object'});
+            }
+          });
       }
     }).bind(this));
     params.express.put(params.ns, (function(req, res) {
@@ -41,12 +43,13 @@ function SyncApi(params) {
       if(!model) {
           res.status(400).json({error:'missing model field'});
       } else {
-          model = this.create(model);
-          if(!model) { // they successfully created it
-            res.status(200).json(model);
-          } else {
-            res.status(500).json({error: 'failed to update object'});
-          }
+          this.update(model, function(model) {
+            if(!model) { // they successfully created it
+              res.status(200).json(model);
+            } else {
+              res.status(500).json({error: 'failed to update object'});
+            }
+          });
       };
     }).bind(this));
     params.express.delete(params.ns, (function(req, res) {
@@ -54,12 +57,13 @@ function SyncApi(params) {
       if(!id) {
           res.status(400).json({error:'need object id'});
       } else {
-        var obj = this.get(id);
-        if(!obj) {
-          res.status(404).json({error:'no object of that id'});
-        } else {
-          res.status(302).json(obj);
-        }
+        this.get(id, function(obj) {
+          if(!obj) {
+            res.status(404).json({error:'no object of that id'});
+          } else {
+            res.status(302).json(obj);
+          }
+        });
       }
     }).bind(this));
 };
